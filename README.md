@@ -1,24 +1,32 @@
-# README
+# TURBO RAILS TUTORIAL
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+We are building a simple application based on this tutorial.
 
-Things you may want to cover:
+<a href="https:https://www.hotrails.dev/turbo-rails/turbo-rails-tutorial-introduction">Link Tutorial</a>
 
-* Ruby version
+___
+## First - Introduction
 
-* System dependencies
+- Rails 7.0.0
+- Ruby 3.2.1
 
-* Configuration
+- Docker
+    - docker-compose up -d
 
-* Database creation
+    - Run postgres on port 5450
+    - Run redis on port 6379
 
-* Database initialization
+- Install the dependencies and create the database
 
-* How to run the test suite
+    ```ruby
+    bin/setup
+    ```
 
-* Services (job queues, cache servers, search engines, etc.)
+- Run the rails server
 
-* Deployment instructions
+    ```ruby
+    bin/dev
+    ```
+    based on the file **Procfile.dev**
+___
 
-* ...
