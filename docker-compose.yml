@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:latest
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    ports:
+      - "5450:5432"
+    environment:
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_DB: quote_editor_development
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+volumes:
+  db-data:
+    driver: local
