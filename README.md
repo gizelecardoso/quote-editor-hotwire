@@ -125,3 +125,15 @@ Using the TDD - development based on tests.
     ```
 ___
 
+## Chapter 2 - CSS files
+
+- Based on the <a href="https://en.bem.info/methodology/">BEM Methodology</a>
+
+- Our structure:
+
+    * **application.sass.scss** manifest file to import all our styles.
+    * **mixins/** where we'll add Sass mixins.
+    * **config/** where we'll add our variables and global styles.
+    * **components/** folder where we'll add our components.
+    * **layouts/** where we'll add our layouts.
+___
