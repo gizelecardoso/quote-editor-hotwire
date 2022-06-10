@@ -1,0 +1,23 @@
+@mixin media($query) {
+    @if $query == tableAndUp {
+        @media (min-width: 50rem) { @content }
+    }
+}
+
+.my-component {
+    @include media(tableAndUp) {
+
+    }
+}
+
+.component-1 {
+    @media (min-width: 50rem) {
+    
+    }
+}
+
+.component-2 {
+    @media (min-width: 50rem) {
+    
+    }
+}
