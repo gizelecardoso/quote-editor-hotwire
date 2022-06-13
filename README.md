@@ -137,3 +137,43 @@ ___
     * **components/** folder where we'll add our components.
     * **layouts/** where we'll add our layouts.
 ___
+
+## Chapter 3 - Turbo Drive
+
+Objective: speeds up application, converting all links and form into <a href="https://developer.mozilla.org/pt-BR/docs/Web/Guide/AJAX/Getting_Started">AJAX requests</a>.
+
+The <head> of the HTML page wont be changed, only the <body> that will be replace with the response of the AJAX requests, caled when the Turbo Drive **intercepts a click on a link or a submission of a form**.
+
+Because of that form of Turbo works, the rails 7 applications are single-page by default, that means only the <body> of the page are replaced.
+
+- Disabling Turbo Drive
+    Some gems not supported Turbo Drive, so on that scenarios it is disabled.
+
+    ```js
+    data: { turbo: false }
+    ```
+
+    Option to disable Turbo Drive on whole project
+    ```js
+    // app/javascript/application.js
+    import { Turbo } from "@hotwired/turbo-rails"
+    Turbo.session.drive = false
+    ```
+
+- Reloading the page
+
+A problem with this Turbo's solution is when the <head> is change by some update in the application, by default Turbo will change only the <body>. So it's important to put a element on the application page **data-turbo-track="reload"**
+
+    ```js
+    // app/views/layouts/application.html.erb
+
+    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
+    <%= javascript_include_tag "application", "data-turbo-track": "reload", defer: true %>
+    ```
+
+- Changing the style of the Turbo Drive progress bar
+
+the browser's default progress bar/loaders won't work as expected anymore, because the Turbo Drives overrides the default behavior of the page.
+
+    - app/assets/stylesheets/components/_turbo_progress_bar.scss
+___
