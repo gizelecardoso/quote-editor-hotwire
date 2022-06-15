@@ -2,6 +2,7 @@ require "application_system_test_case"
 
 class QuotesTest < ApplicationSystemTestCase
   setup do
+    login_as users(:accountant)
     # Reference to the first fixture quote
     # We need to order quote as well in the system test
     @quote = Quote.ordered.first
