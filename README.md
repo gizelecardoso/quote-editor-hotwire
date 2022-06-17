@@ -512,4 +512,130 @@ both signed stream names are the same, but as they are different companies, they
 
     <%= turbo_stream_from current_company, "quotes" %>
     ```
+
+___
+
+## Chapter 7 - Flash messages with Hotwire
+
+Now that we have a working CRUD controller for our Quote model, we want to add flash messages to improve the usability of our application
+
+- Add flash message partial
+
+    ```ruby
+    # app/views/layouts/_flash.html.erb
+
+    <% flash.each do |flash_type, message| %>
+        <div class="flash__message">
+            <%= message %>
+        </div>
+    <% end %>
+    ```
+
+    Render on every page of the application
+    ```ruby
+    # app/views/layouts/application.html.erb
+    <div class="flash">
+      <%= render "layouts/flash" %>
+    </div>
+    ```
+
+    Add css
+    ```ruby
+    # app/assets/stylesheets/components/_flash.scss
+    ```
+
+    And animation
+    ```ruby
+    # app/assets/stylesheets/config/_animations.scss
+    ```
+
+However, there is one small glitch with our current implementation. When we hover the mouse on the flash message area, our mouse cursor changes even when the flash message is not visible anymore. This is because even if our flash message has an opacity of zero, it is still present in the DOM and above the rest of the page's content. To solve this problem, we need to remove the flash messages from the DOM when they reach an opacity of zero.
+
+This is where we will add the single line of JavaScript we need in the whole tutorial. We will create a small Stimulus Controller that removes the flash message when the appear-then-fade animation ends.
+
+    ```ruby
+    bin/rails generate stimulus removals
+      create  app/javascript/controllers/removals_controller.js
+       rails  stimulus:manifest:update
+    ```
+
+    We dont need the hello controller, we created our application at the beginning of the tutorial:
+
+    ```ruby
+    bin/rails destroy stimulus hello
+        remove  app/javascript/controllers/hello_controller.js
+        rails  stimulus:manifest:update
+    ```
+
+    To remove the lines of index.js, if not removed in the last command
+
+    ```ruby
+    bin/rails stimulus:manifest:update
+    ```
+
+    implement our Stimulus Controller
+
+    ```ruby
+    remove() {
+        this.element.remove()
+    }
+    ```
+
+    ```ruby
+    # app/views/layouts/_flash.html.erb
+
+    <% flash.each do |flash_type, message| %>
+    <div
+        class="flash__message"
+        data-controller="removals"
+        data-action="animationend->removals#remove"
+    >
+        <%= message %>
+    </div>
+    <% end %>
+    ```
+
+    The HTML snippet above suggests that each flash message is connected to a RemovalsController thanks to the data-controller="removals" data attribute. When the animation ends, the function remove of the RemovalsController is called thanks to the data-action="animationend->removals#remove data attribute.
+
+
+    Add on the CRUD controller of quotes
+
+    ```ruby
+    format.turbo_stream { flash.now[:notice] = "Quote was successfully created." }
+    
+    format.turbo_stream { flash.now[:notice] = "Quote was successfully updated." }
+
+    format.turbo_stream { flash.now[:notice] = "Quote was successfully destroyed." }
+
+    ```
+
+    Add if flass on the render in the application.js
+
+    ```ruby
+    <div id="flash" class="flash">
+      <%= render "layouts/flash" %>
+    </div>
+    ```
+
+    To remove possible duplicates, we will create a method on the Application Helper:
+
+    ```ruby
+    def render_turbo_stream_flash_messages
+        turbo_stream.prepend "flash", partial: "layouts/flash"
+    end
+    ```
+
+    And use on three files of turbo:
+
+      ```ruby
+    # app/views/quotes/create.turbo_stream.erb
+    # app/views/quotes/update.turbo_stream.erb
+    # app/views/quotes/destroy.turbo_stream.erb
+
+    <%= render_turbo_stream_flash_messages %>
+
+    ```
+
+
+
 ___
