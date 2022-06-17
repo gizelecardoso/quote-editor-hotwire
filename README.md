@@ -531,7 +531,8 @@ Now that we have a working CRUD controller for our Quote model, we want to add f
     <% end %>
     ```
 
-    Render on every page of the application
+- Render on every page of the application
+
     ```ruby
     # app/views/layouts/application.html.erb
     <div class="flash">
@@ -539,12 +540,14 @@ Now that we have a working CRUD controller for our Quote model, we want to add f
     </div>
     ```
 
-    Add css
+- Add css
+
     ```ruby
     # app/assets/stylesheets/components/_flash.scss
     ```
 
-    And animation
+- And animation
+
     ```ruby
     # app/assets/stylesheets/config/_animations.scss
     ```
@@ -559,7 +562,7 @@ This is where we will add the single line of JavaScript we need in the whole tut
        rails  stimulus:manifest:update
     ```
 
-    We dont need the hello controller, we created our application at the beginning of the tutorial:
+- We dont need the hello controller, we created our application at the beginning of the tutorial:
 
     ```ruby
     bin/rails destroy stimulus hello
@@ -567,13 +570,13 @@ This is where we will add the single line of JavaScript we need in the whole tut
         rails  stimulus:manifest:update
     ```
 
-    To remove the lines of index.js, if not removed in the last command
+- To remove the lines of index.js, if not removed in the last command
 
     ```ruby
     bin/rails stimulus:manifest:update
     ```
 
-    implement our Stimulus Controller
+- Implement our Stimulus Controller
 
     ```ruby
     remove() {
@@ -595,10 +598,10 @@ This is where we will add the single line of JavaScript we need in the whole tut
     <% end %>
     ```
 
-    The HTML snippet above suggests that each flash message is connected to a RemovalsController thanks to the data-controller="removals" data attribute. When the animation ends, the function remove of the RemovalsController is called thanks to the data-action="animationend->removals#remove data attribute.
+The HTML snippet above suggests that each flash message is connected to a RemovalsController thanks to the data-controller="removals" data attribute. When the animation ends, the function remove of the RemovalsController is called thanks to the data-action="animationend->removals#remove data attribute.
 
 
-    Add on the CRUD controller of quotes
+- Add on the CRUD controller of quotes
 
     ```ruby
     format.turbo_stream { flash.now[:notice] = "Quote was successfully created." }
@@ -609,7 +612,7 @@ This is where we will add the single line of JavaScript we need in the whole tut
 
     ```
 
-    Add if flass on the render in the application.js
+- Add if flass on the render in the application.js
 
     ```ruby
     <div id="flash" class="flash">
@@ -617,7 +620,7 @@ This is where we will add the single line of JavaScript we need in the whole tut
     </div>
     ```
 
-    To remove possible duplicates, we will create a method on the Application Helper:
+- To remove possible duplicates, we will create a method on the Application Helper:
 
     ```ruby
     def render_turbo_stream_flash_messages
@@ -625,9 +628,9 @@ This is where we will add the single line of JavaScript we need in the whole tut
     end
     ```
 
-    And use on three files of turbo:
+- And use on three files of turbo:
 
-      ```ruby
+    ```ruby
     # app/views/quotes/create.turbo_stream.erb
     # app/views/quotes/update.turbo_stream.erb
     # app/views/quotes/destroy.turbo_stream.erb
@@ -636,6 +639,78 @@ This is where we will add the single line of JavaScript we need in the whole tut
 
     ```
 
+___
+
+## Chapter 8 - Two ways to handle empty states with Hotwire
+
+1. The first one will use Turbo Frames and Turbo Streams
+
+    * The first thing we have to do is display the empty state only when there are no quotes on the page. To do this, let's create an empty state partial that we can then use on the Quotes#index page.
+
+    ```ruby
+    # app/views/quotes/_empty_state.html.erb
+    ```
+
+    * We can now render this empty state only when the current user has no quote on the Quotes#index page
+
+    ```ruby
+    # app/views/quotes/index.html.erb
+
+    <%= turbo_frame_tag Quote.new do %>
+        <% if @quotes.none? %>
+        <%= render "quotes/empty_state" %>
+        <% end %>
+    <% end %>
+    ```
+
+    * Add styles with css *app/assets/stylesheets/components/_empty_state.scss*
+    * Import on *app/assets/stylesheets/application.sass.scss*
+
+2. The second one will use the :only-child CSS pseudo-class
+
+    * move the content of the quotes/empty_state partial to the quotes list
+
+    ```ruby
+    # app/views/quotes/index.html.erb
+
+    <%= turbo_frame_tag Quote.new %>
+
+    <%= turbo_frame_tag "quotes" do %>
+        <%= render "quotes/empty_state" %>
+        <%= render @quotes %>
+    <% end %>
+    ```
+
+    * Then, we have to use the :only-child pseudo-class in our CSS to show the empty state when it is the only child of the Turbo Frame with id quotes and hide it when it is not:
+
+    ```ruby
+    # app/assets/stylesheets/components/_empty_state.scss
+
+    &--only-child {
+        display: none;
+
+        &:only-child {
+        display: revert;
+        }
+    }
+    ```
+
+    - We use what the BEM methodology calls a modifier here for our .empty-state--only-child CSS class because we want to support the two methods presented in this chapter with the same .empty-state class
+
+    * we need the "Add quote" link to explicitly target the Turbo Frame with the id of new_quote as it is no longer a child of the Turbo Frame. We can achieve this thanks to the data-turbo-frame="new_quote" data attribute
+
+    ```ruby
+    # app/views/quotes/_empty_state.html.erb
+    <div class="empty-state empty-state--only-child">
+    ```
+
+    - reset the content of the destroy.turbo_stream.erb view as we don't need any custom behavior anymore
+
+    - We can now test the behavior in our browser:
+
+    - When we have quotes in the list, the empty state is not visible
+    - When we don't have quotes in the list, the empty state is visible
+    - The best part is that we could achieve this behavior with CSS only!
 
 
 ___
