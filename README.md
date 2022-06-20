@@ -48,7 +48,7 @@ Using the TDD - development based on tests.
         - Return of the Quote page with the new name created.
 
     - use Rails fixtures to create fake data for our tests
-        
+
         ```ruby
         # test/fixtures/quotes.yml
         ```
@@ -84,7 +84,7 @@ Using the TDD - development based on tests.
         - update
         - destroy
 
-- Creating Views 
+- Creating Views
 
     - Based on Actions:
         - index.html.erb
@@ -102,7 +102,7 @@ Using the TDD - development based on tests.
             this partial especially, will use the benefit of the gem **simple_form**
 
 - Run Test
-    
+
     ```ruby
     bin/rails test:system
     ```
@@ -293,7 +293,7 @@ ___
 
 
 - Turbo Streams conventions and syntactic sugar
-        
+
     ```ruby
     #after_create_commit -> {
         #broadcast_prepend_later_to "quotes"
@@ -301,7 +301,7 @@ ___
         # by default in Rails for our Quote model is equal to "quotes/quote"
         # partial: "quotes/quote",
 
-        # The locals default value is equal to { model_name.element.to_sym => self } 
+        # The locals default value is equal to { model_name.element.to_sym => self }
         # in the context of our Quote model, is equal to { quote: self }
         # locals: { quote: self }
 
@@ -386,13 +386,13 @@ The Quote, Company, and User models will be related to one another by the follow
 - Adding a home page to our application
 
     1. Users must be authenticated to access the quote editor, and they should only see quotes that belong to their company.
-    
+
     **ApplicationController** thanks to the Devise method authenticate_user!
-    
+
     ```ruby
     before_action :authenticate_user!
     ```
-    
+
     2. Users must be able to navigate to the sign-in form from the home page even when they are not authenticated.
 
     ```ruby
@@ -605,7 +605,7 @@ The HTML snippet above suggests that each flash message is connected to a Remova
 
     ```ruby
     format.turbo_stream { flash.now[:notice] = "Quote was successfully created." }
-    
+
     format.turbo_stream { flash.now[:notice] = "Quote was successfully updated." }
 
     format.turbo_stream { flash.now[:notice] = "Quote was successfully destroyed." }
@@ -712,5 +712,15 @@ ___
     - When we don't have quotes in the list, the empty state is visible
     - The best part is that we could achieve this behavior with CSS only!
 
+
+___
+
+## Chapter 9 - Another CRUD controller with Turbo Rails
+
+1. Create a model named LineItemDate with a date field and a reference to the quote it belongs to. We add this reference because each line item date belongs to a quote, and each quote has many line item dates
+
+    ```ruby
+    bin/rails generate model LineItemDate quote:references date:date
+    ```
 
 ___
